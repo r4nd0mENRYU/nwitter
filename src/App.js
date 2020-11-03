@@ -1,26 +1,25 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from 'react';
+import AppRouter from "./components/Router";
+import {authService} from "./fbase";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [init, setInit] = useState(false)
+    const [userObj, setUserObj] = useState(null);
+    useEffect(() => {
+        authService.onAuthStateChanged((user) => {
+            if (user) {
+                setUserObj(user)
+            }
+        })
+        setInit(true)
+
+    },[])
+    return (
+        <>
+            {init ? <AppRouter isLoggedIn={Boolean(userObj)} userObj={userObj}/> : "Initializing..."}
+            <footer>&copy; {new Date().getFullYear()} Nwitter</footer>
+        </>
+    );
 }
 
 export default App;
